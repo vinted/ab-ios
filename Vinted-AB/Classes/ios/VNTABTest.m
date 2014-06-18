@@ -38,15 +38,20 @@ static NSString * const VNTABTestDateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
 
 #pragma mark - Private intance methods
 
-- (NSDate *)ISODateFromString:(NSString *)string
++ (NSDate *)ISODateFromString:(NSString *)string
 {
     if (!string) {
         return nil;
     }
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
-    dateFormatter.dateFormat = VNTABTestDateFormat;
+    static NSDateFormatter *dateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
+        dateFormatter.dateFormat = VNTABTestDateFormat;
+    });
+
     return [dateFormatter dateFromString:string];
 }
 
@@ -59,8 +64,8 @@ static NSString * const VNTABTestDateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
     }
     
     NSDate *date = [NSDate date];
-    return [date compare:[self ISODateFromString:self.startAt]] == NSOrderedDescending &&
-           [date compare:[self ISODateFromString:self.endAt]]  == NSOrderedAscending;
+    return [date compare:[VNTABTest ISODateFromString:self.startAt]] == NSOrderedDescending &&
+           [date compare:[VNTABTest ISODateFromString:self.endAt]]  == NSOrderedAscending;
 }
 
 @end
