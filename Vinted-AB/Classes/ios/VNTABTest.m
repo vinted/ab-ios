@@ -9,8 +9,6 @@
 #import "VNTABTest.h"
 #import "VNTABTestVariant.h"
 
-static NSString * const VNTABTestDateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
-
 @implementation VNTABTest
 
 + (JSONKeyMapper *)keyMapper
@@ -36,25 +34,6 @@ static NSString * const VNTABTestDateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
     return NO;
 }
 
-#pragma mark - Private intance methods
-
-+ (NSDate *)ISODateFromString:(NSString *)string
-{
-    if (!string) {
-        return nil;
-    }
-    
-    static NSDateFormatter *dateFormatter;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
-        dateFormatter.dateFormat = VNTABTestDateFormat;
-    });
-
-    return [dateFormatter dateFromString:string];
-}
-
 #pragma mark - Public instance methods
 
 - (BOOL)isRunning
@@ -64,8 +43,8 @@ static NSString * const VNTABTestDateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
     }
     
     NSDate *date = [NSDate date];
-    return [date compare:[VNTABTest ISODateFromString:self.startAt]] == NSOrderedDescending &&
-           [date compare:[VNTABTest ISODateFromString:self.endAt]]  == NSOrderedAscending;
+    return [date compare:self.startAt] == NSOrderedDescending &&
+           [date compare:self.endAt] == NSOrderedAscending;
 }
 
 @end
