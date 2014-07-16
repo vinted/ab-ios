@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Vinted-AB"
-  s.version      = "1.0-beta1"
+  s.version      = "1.0-beta2"
   s.summary      = " Vinted AB testing framework."
 
   s.description  = <<-DESC
@@ -68,7 +68,7 @@ Pod::Spec.new do |s|
   #  Specify the location from where the source should be retrieved.
   #  Supports git, hg, bzr, svn and HTTP.
   #
-  s.source       = { :git => "https://github.com/vinted/ab-ios.git", :tag => "1.0-beta1" }
+  s.source       = { :git => "https://github.com/vinted/ab-ios.git", :tag => "1.0-beta2" }
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
