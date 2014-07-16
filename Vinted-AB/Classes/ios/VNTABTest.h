@@ -15,8 +15,8 @@
 
 @property (nonatomic, strong) NSString *identifier;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString<Optional> *startAt;
-@property (nonatomic, strong) NSString<Optional> *endAt;
+@property (nonatomic, strong) NSDate<Optional> *startAt;
+@property (nonatomic, strong) NSDate<Optional> *endAt;
 @property (nonatomic, strong) NSString *seed;
 @property (nonatomic, strong) NSArray<Optional> *buckets;
 @property (nonatomic, assign) BOOL allBuckets;
