@@ -39,7 +39,8 @@
                       @"examples/no_buckets",
                       @"examples/no_variants",
                       @"examples/zero_buckets",
-                      @"examples/zero_weight"
+                      @"examples/zero_weight",
+                      @"examples/no_end_date"
                       ];
 }
 
@@ -78,10 +79,10 @@
         for (NSString *variantName in [variants allKeys]) {
             for (NSNumber *identifier in variants[variantName]) {
                 self.testConfig = [[VNTABTestConfig alloc] initWithString:jsonString error:nil];
-                VNTABTest *test = [self.testConfig testForName:testName];
                 VNTABTestVariant *variant = [self.testConfig assignedVariantForTestName:testName
                                                                              identifier:identifier.stringValue];
-                if ([variantName isEqualToString:@""] || ![test isRunning]) {
+                
+                if ([variantName isEqualToString:@""]) {
                     XCTAssertNil(variant.name, @"variant.name should be nil in this case. (test.name = %@, identifier = %d",
                                  testName, identifier.integerValue);
                 } else {

@@ -43,8 +43,10 @@
     }
     
     NSDate *date = [NSDate date];
-    return [date compare:self.startAt] == NSOrderedDescending &&
-           [date compare:self.endAt] == NSOrderedAscending;
+    BOOL afterStartDate = [date compare:self.startAt] == NSOrderedDescending;
+    BOOL beforeEndDate = (self.endAt == nil || [date compare:self.endAt] == NSOrderedAscending);
+    
+    return afterStartDate && beforeEndDate;
 }
 
 @end
