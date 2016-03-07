@@ -105,7 +105,13 @@
     BN_CTX *ctx = BN_CTX_new();
     BN_dec2bn(&modulo, [[NSString stringWithFormat:@"%d", integer] cStringUsingEncoding:NSUTF8StringEncoding]);
     BN_mod(remainder, number, modulo, ctx);
-    return [[NSString stringWithCString:BN_bn2dec(remainder) encoding:NSUTF8StringEncoding] integerValue];
+    char *decNumber = BN_bn2dec(remainder);
+    NSInteger *result = [[NSString stringWithCString:decNumber encoding:NSUTF8StringEncoding] integerValue];
+    free(decNumber);
+    BN_clear_free(remainder);
+    BN_clear_free(modulo);
+    BN_CTX_free(ctx);
+    return result;
 }
 
 - (VNTABTest *)testForName:(NSString *)name

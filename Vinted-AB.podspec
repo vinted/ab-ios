@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Vinted-AB"
-  s.version      = "1.0-beta3"
+  s.version      = "1.0-beta4"
   s.summary      = " Vinted AB testing framework."
 
   s.description  = <<-DESC
