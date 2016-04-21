@@ -83,12 +83,12 @@
                                                                              identifier:identifier.stringValue];
                 
                 if ([variantName isEqualToString:@""]) {
-                    XCTAssertNil(variant.name, @"variant.name should be nil in this case. (test.name = %@, identifier = %d",
-                                 testName, identifier.integerValue);
+                    XCTAssertNil(variant.name, @"variant.name should be nil in this case. (test.name = %@, identifier = %ld",
+                                 testName, (long)identifier.integerValue);
                 } else {
                     XCTAssertTrue([variantName isEqualToString:variant.name],
-                                  @"self.testConfig should assign right test variant. (test.name = %@, identifier = %d",
-                                  testName, identifier.integerValue);
+                                  @"self.testConfig should assign right test variant. (test.name = %@, identifier = %ld",
+                                  testName, (long)identifier.integerValue);
                 }
                 
             }

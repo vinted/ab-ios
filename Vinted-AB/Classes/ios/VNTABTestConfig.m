@@ -10,7 +10,7 @@
 #import "VNTABTest.h"
 #import "VNTABTestVariant.h"
 #import <CommonCrypto/CommonDigest.h>
-#import <OpenSSL-Universal/openssl/bn.h>
+#import <JKBigInteger/JKBigInteger.h>
 
 @implementation VNTABTestConfig
 
@@ -25,15 +25,21 @@
 
 - (NSInteger)bucketIdForIdentifier:(NSString *)identifier
 {
-    BIGNUM *number = [self hexDigestString:[self.salt stringByAppendingString:identifier]];
-    return [self modNumber:number byInteger:self.bucketCount];
+    NSString *digestedString = [self hexDigestedString:[self.salt stringByAppendingString:identifier]];
+    JKBigInteger *bigInteger = [[JKBigInteger alloc] initWithString:digestedString andRadix:16];
+    JKBigInteger *bucketCount = [[JKBigInteger alloc] initWithUnsignedLong:self.bucketCount];
+    JKBigInteger *remainder = [bigInteger remainder:bucketCount];
+    return [remainder unsignedIntValue];
 }
 
 - (NSInteger)weightIdForTest:(VNTABTest *)test identifier:(NSString *)identifier
 {
-    BIGNUM *number = [self hexDigestString:[test.seed stringByAppendingString:identifier]];
+    NSString *digestedString = [self hexDigestedString:[test.seed stringByAppendingString:identifier]];
     NSInteger variantWeightSum = [self variantWeightSumOfTest:test];
-    return [self modNumber:number byInteger:(variantWeightSum > 0 ? variantWeightSum : 1)];
+    JKBigInteger *bigInteger = [[JKBigInteger alloc] initWithString:digestedString andRadix:16];
+    JKBigInteger *variantWeightSumBigInteger = [[JKBigInteger alloc] initWithUnsignedLong:(variantWeightSum > 0 ? variantWeightSum : 1)];
+    JKBigInteger *remainder = [bigInteger remainder:variantWeightSumBigInteger];
+    return [remainder unsignedIntValue];
 }
 
 - (NSArray *)assignedTestsForIdentifier:(NSString *)identifier
@@ -78,15 +84,20 @@
     return test ? [self assignedVariantForTest:test identifier:identifier] : nil;
 }
 
-- (BIGNUM *)hexDigestString:(NSString *)string
+- (NSString *)hexDigestedString:(NSString *)string
 {
     if (!string) {
         return nil;
     }
     const char* str = [string UTF8String];
     unsigned char result[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(str, strlen(str), result);
-    return BN_bin2bn(result, CC_SHA256_DIGEST_LENGTH, NULL);
+    CC_SHA256(str, (CC_LONG)strlen(str), result);
+
+    NSMutableString *digestedString = [NSMutableString new];
+    for (NSInteger i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [digestedString appendFormat:@"%02x", result[i]];
+    }
+    return [NSString stringWithString:digestedString];
 }
 
 - (NSInteger)variantWeightSumOfTest:(VNTABTest *)test
@@ -96,22 +107,6 @@
         weightSum += variant.chanceWeight;
     }
     return weightSum;
-}
-
-- (NSInteger)modNumber:(BIGNUM *)number byInteger:(NSInteger)integer
-{
-    BIGNUM *remainder = BN_new();
-    BIGNUM *modulo = BN_new();
-    BN_CTX *ctx = BN_CTX_new();
-    BN_dec2bn(&modulo, [[NSString stringWithFormat:@"%d", integer] cStringUsingEncoding:NSUTF8StringEncoding]);
-    BN_mod(remainder, number, modulo, ctx);
-    char *decNumber = BN_bn2dec(remainder);
-    NSInteger *result = [[NSString stringWithCString:decNumber encoding:NSUTF8StringEncoding] integerValue];
-    free(decNumber);
-    BN_clear_free(remainder);
-    BN_clear_free(modulo);
-    BN_CTX_free(ctx);
-    return result;
 }
 
 - (VNTABTest *)testForName:(NSString *)name

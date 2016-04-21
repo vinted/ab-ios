@@ -1,4 +1,6 @@
 platform :ios, "6.0"
 
-pod 'OpenSSL-Universal', '~> 1.0.1.h'
+pod 'JKBigInteger', '~> 0.0.1'
 pod 'JSONModel', '~> 1.0.1'
+
+link_with 'Vinted-AB', 'Vinted-AB-Tests'
